@@ -1,3 +1,5 @@
+package com.mine;
+
 import lombok.Data;
 
 /**

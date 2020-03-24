@@ -1,3 +1,5 @@
+package com.mine;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +23,7 @@ public class ServiceRegistry {
 	 * 核心的内存数据结构：注册表
 	 * 
 	 * Map：key是服务名称，value是这个服务的所有的服务实例
-	 * Map<String, ServiceInstance>：key是服务实例id，value是服务实例的信息
+	 * Map<String, com.mine.ServiceInstance>：key是服务实例id，value是服务实例的信息
 	 * 
 	 */
 	private Map<String, Map<String, ServiceInstance>> registry = 
@@ -73,11 +75,15 @@ public class ServiceRegistry {
 	 * @param serviceInstanceId
 	 */
 	public synchronized void remove(String serviceName, String serviceInstanceId) {
-		System.out.println("服务实例【" + serviceInstanceId + "】，从注册表中进行摘除");
+		System.out.println("服务实例从注册表中摘除【" + serviceInstanceId + "】");
 		Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
 		serviceInstanceMap.remove(serviceInstanceId);
 	}
-	
+
+	/**
+	 * 获取服务注册表的单例实例
+	 * @return
+	 */
 	public static ServiceRegistry getInstance() {
 		return instance;
 	}

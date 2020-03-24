@@ -1,3 +1,5 @@
+package com.mine;
+
 import java.util.Map;
 
 /**
@@ -20,7 +22,7 @@ public class ServiceAliveMonitor {
 	public ServiceAliveMonitor() {
 		daemon = new Daemon();
 		daemon.setDaemon(true);
-		daemon.setName("ServiceAliveMonitor");
+		daemon.setName("com.mine.ServiceAliveMonitor");
 	}
 	
 	/**

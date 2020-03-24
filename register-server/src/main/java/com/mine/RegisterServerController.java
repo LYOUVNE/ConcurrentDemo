@@ -1,3 +1,5 @@
+package com.mine;
+
 import java.util.Map;
 
 /**
@@ -48,9 +50,14 @@ public class RegisterServerController {
 		HeartbeatResponse heartbeatResponse = new HeartbeatResponse();
 		
 		try {
+			// 对服务实例进行续约
 			ServiceInstance serviceInstance = registry.getServiceInstance(
 					heartbeatRequest.getServiceName(), heartbeatRequest.getServiceInstanceId());
 			serviceInstance.renew();
+
+			// 记录一下每分钟的心跳的次数
+			HeartbeatMeasuredRate heartbeatMeasuredRate = HeartbeatMeasuredRate.getInstance();
+			heartbeatMeasuredRate.increment();
 			
 			heartbeatResponse.setStatus(HeartbeatResponse.SUCCESS); 
 		} catch (Exception e) {
@@ -67,5 +74,12 @@ public class RegisterServerController {
 	 */
 	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
 		return registry.getRegistry();
+	}
+
+	/**
+	 * 服务下线
+	 */
+	public void cancel(String serviceName,String serviceInstanceId) {
+		registry.remove(serviceName,serviceInstanceId);
 	}
 }
