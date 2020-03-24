@@ -1,3 +1,5 @@
+import java.util.Map;
+
 /**
  * 这个controller是负责接收register-client发送过来的请求的
  * 在Spring Cloud Eureka中用的组件是jersey，百度一下jersey是什么东西
@@ -8,7 +10,7 @@
  */
 public class RegisterServerController {
 
-	private Registry registry = Registry.getInstance();
+	private ServiceRegistry registry = ServiceRegistry.getInstance();
 	
 	/**
 	 * 服务注册
@@ -24,9 +26,9 @@ public class RegisterServerController {
 			serviceInstance.setIp(registerRequest.getIp()); 
 			serviceInstance.setPort(registerRequest.getPort()); 
 			serviceInstance.setServiceInstanceId(registerRequest.getServiceInstanceId()); 
-			serviceInstance.setServiceName(registerRequest.getServiceName());  
-			
-			registry.register(serviceInstance);  
+			serviceInstance.setServiceName(registerRequest.getServiceName());
+
+			registry.register(serviceInstance);
 			
 			registerResponse.setStatus(RegisterResponse.SUCCESS); 
 		} catch (Exception e) {
@@ -58,5 +60,12 @@ public class RegisterServerController {
 		
 		return heartbeatResponse;
 	}
-	
+
+	/**
+	 * 拉取服务注册表
+	 * @return
+	 */
+	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
+		return registry.getRegistry();
+	}
 }

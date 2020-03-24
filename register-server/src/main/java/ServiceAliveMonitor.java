@@ -20,6 +20,7 @@ public class ServiceAliveMonitor {
 	public ServiceAliveMonitor() {
 		daemon = new Daemon();
 		daemon.setDaemon(true);
+		daemon.setName("ServiceAliveMonitor");
 	}
 	
 	/**
@@ -36,7 +37,7 @@ public class ServiceAliveMonitor {
 	 */
 	private class Daemon extends Thread {
 		
-		private Registry registry = Registry.getInstance();
+		private ServiceRegistry registry = ServiceRegistry.getInstance();
 		
 		@Override
 		public void run() {
@@ -55,7 +56,7 @@ public class ServiceAliveMonitor {
 							// 认为这个服务就死了
 							// 从注册表中摘除这个服务实例
 							if(!serviceInstance.isAlive()) {
-								registry.remove(serviceName, serviceInstance.getServiceInstanceId()); 
+								registry.remove(serviceName, serviceInstance.getServiceInstanceId());
 							}
 						}
 					}

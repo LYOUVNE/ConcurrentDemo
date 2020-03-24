@@ -12,6 +12,7 @@ public class RegisterClient {
 	public static final String IP = "192.168.31.207";
 	public static final String HOSTNAME = "inventory01";
 	public static final int PORT = 9000;
+	private static final Long HEARTBEAT_INTERVAL = 30 * 1000L;
 
 	/**
 	 * 服务实例id
@@ -30,12 +31,15 @@ public class RegisterClient {
 	 * 服务实例是否在运行
 	 */
 	private volatile Boolean isRunning;
+
+	private ClientCachedServiceRegistry registry;
 	
 	public RegisterClient() {
 		this.serviceInstanceId = UUID.randomUUID().toString().replace("-", "");
 		this.httpSender = new HttpSender();
 		this.heartbeatWorker = new HeartbeatWorker();
 		this.isRunning = true;
+		this.registry = new ClientCachedServiceRegistry(this,httpSender);
 	}
 	
 	public void start() {
@@ -54,7 +58,11 @@ public class RegisterClient {
 			registerClientWorker.start();
 			registerClientWorker.join();
 
+			// 启动心跳线程，定时发送心跳信息
 			heartbeatWorker.start();
+
+			// 初始化客户端缓存的服务注册表组件
+			this.registry.initialize();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -63,6 +71,7 @@ public class RegisterClient {
 	public void shutDown() {
 		this.isRunning = false;
 		this.heartbeatWorker.interrupt();
+		this.registry.destory();
 	}
 	
 	/**
@@ -111,12 +120,20 @@ public class RegisterClient {
 				try {
 					heartbeatResponse = httpSender.heartbeat(heartbeatRequest);
 					System.out.println("心跳的结果为：" + heartbeatResponse.getStatus() + "......");
-					Thread.sleep(30 * 1000);
+					Thread.sleep(HEARTBEAT_INTERVAL);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
+	}
+
+	/**
+	 * 返回RegisterClient是否正在运行
+	 * @return
+	 */
+	public boolean isRunning(){
+		return isRunning;
 	}
 	
 }

@@ -6,14 +6,14 @@ import java.util.Map;
  * @author zhonghuashishan
  *
  */
-public class Registry {
+public class ServiceRegistry {
 
 	/**
 	 * 注册表是一个单例
 	 */
-	private static Registry instance = new Registry();
+	private static ServiceRegistry instance = new ServiceRegistry();
 	
-	private Registry() {
+	private ServiceRegistry() {
 		
 	}
 	
@@ -31,7 +31,7 @@ public class Registry {
 	 * 服务注册
 	 * @param serviceInstance 服务实例
 	 */
-	public void register(ServiceInstance serviceInstance) {
+	public synchronized void register(ServiceInstance serviceInstance) {
 		Map<String, ServiceInstance> serviceInstanceMap = 
 				registry.get(serviceInstance.getServiceName());
 		
@@ -53,7 +53,7 @@ public class Registry {
 	 * @param serviceInstanceId 服务实例id
 	 * @return 服务实例
 	 */
-	public ServiceInstance getServiceInstance(String serviceName,
+	public synchronized ServiceInstance getServiceInstance(String serviceName,
 			String serviceInstanceId) {
 		Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
 		return serviceInstanceMap.get(serviceInstanceId);
@@ -63,7 +63,7 @@ public class Registry {
 	 * 获取整个注册表
 	 * @return
 	 */
-	public Map<String, Map<String, ServiceInstance>> getRegistry() {
+	public synchronized Map<String, Map<String, ServiceInstance>> getRegistry() {
 		return registry;
 	}
 	
@@ -72,13 +72,13 @@ public class Registry {
 	 * @param serviceName
 	 * @param serviceInstanceId
 	 */
-	public void remove(String serviceName, String serviceInstanceId) {
+	public synchronized void remove(String serviceName, String serviceInstanceId) {
 		System.out.println("服务实例【" + serviceInstanceId + "】，从注册表中进行摘除");
 		Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
 		serviceInstanceMap.remove(serviceInstanceId);
 	}
 	
-	public static Registry getInstance() {
+	public static ServiceRegistry getInstance() {
 		return instance;
 	}
 	

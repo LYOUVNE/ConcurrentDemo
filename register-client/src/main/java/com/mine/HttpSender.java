@@ -1,5 +1,8 @@
 package com.mine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * 负责发送各种http请求的组件
  *
@@ -36,6 +39,26 @@ public class HttpSender {
 		response.setStatus(RegisterResponse.SUCCESS); 
 		
 		return response;
+	}
+
+	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry(){
+		Map<String, Map<String, ServiceInstance>> registry = new HashMap<String, Map<String, ServiceInstance>>();
+
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setHostname("finance-service-01");
+		serviceInstance.setIp("192.168.31.1207");
+		serviceInstance.setPort(9000);
+		serviceInstance.setServiceInstanceId("FINANCE-SERVICE-192.168.31.207:9000");
+		serviceInstance.setServiceName("FINANCE-SERVICE");
+
+		Map<String,ServiceInstance> serviceInstances = new HashMap<String, ServiceInstance>();
+		serviceInstances.put("FINANCE-SERVICE-192.168.31.207:9000",serviceInstance);
+
+		registry.put("FINANCE-SERVICE",serviceInstances);
+
+		System.out.println("拉取注册表：" + registry);
+
+		return registry;
 	}
 	
 }
