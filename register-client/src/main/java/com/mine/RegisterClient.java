@@ -72,6 +72,7 @@ public class RegisterClient {
 		this.isRunning = false;
 		this.heartbeatWorker.interrupt();
 		this.registry.destory();
+		this.httpSender.cancel(SERVICE_NAME, serviceInstanceId);
 	}
 	
 	/**
