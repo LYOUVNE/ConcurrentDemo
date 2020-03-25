@@ -22,7 +22,7 @@ public class ServiceAliveMonitor {
 	public ServiceAliveMonitor() {
 		daemon = new Daemon();
 		daemon.setDaemon(true);
-		daemon.setName("com.mine.ServiceAliveMonitor");
+		daemon.setName("ServiceAliveMonitor");
 	}
 	
 	/**
@@ -47,6 +47,13 @@ public class ServiceAliveMonitor {
 			
 			while(true) {
 				try {
+					// 可以判断一下是否要开启自我保护机制
+					SelfProtectionPolicy selfProtectionPolicy = SelfProtectionPolicy.getInstance();
+					if (selfProtectionPolicy.isEnable()) {
+						Thread.sleep(CHECK_ALIVE_INTERVAL);
+						continue;
+					}
+
 					registryMap = registry.getRegistry();
 					
 					for(String serviceName : registryMap.keySet()) {
@@ -59,6 +66,12 @@ public class ServiceAliveMonitor {
 							// 从注册表中摘除这个服务实例
 							if(!serviceInstance.isAlive()) {
 								registry.remove(serviceName, serviceInstance.getServiceInstanceId());
+
+								// 更新自我保护机制的阈值
+								synchronized (SelfProtectionPolicy.class) {
+									selfProtectionPolicy.setExpectedHeartbeatRate(selfProtectionPolicy.getExpectedHeartbeatRate() - 2);
+									selfProtectionPolicy.setExpectedHeartbeatThreshold((long) (selfProtectionPolicy.getExpectedHeartbeatThreshold() * 0.85));
+								}
 							}
 						}
 					}

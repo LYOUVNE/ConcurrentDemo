@@ -23,7 +23,7 @@ public class ServiceRegistry {
 	 * 核心的内存数据结构：注册表
 	 * 
 	 * Map：key是服务名称，value是这个服务的所有的服务实例
-	 * Map<String, com.mine.ServiceInstance>：key是服务实例id，value是服务实例的信息
+	 * Map<String, ServiceInstance>：key是服务实例id，value是服务实例的信息
 	 * 
 	 */
 	private Map<String, Map<String, ServiceInstance>> registry = 
@@ -45,7 +45,7 @@ public class ServiceRegistry {
 		serviceInstanceMap.put(serviceInstance.getServiceInstanceId(), 
 				serviceInstance);
 		
-		System.out.println("服务实例【" + serviceInstance + "】，完成注册......");  
+		System.out.println("服务实例，完成注册......【" + serviceInstance + "】");
 		System.out.println("注册表：" + registry); 
 	}
 	
@@ -75,7 +75,7 @@ public class ServiceRegistry {
 	 * @param serviceInstanceId
 	 */
 	public synchronized void remove(String serviceName, String serviceInstanceId) {
-		System.out.println("服务实例从注册表中摘除【" + serviceInstanceId + "】");
+		System.out.println("服务实例从注册表中摘除【" + serviceName + ", " + serviceInstanceId + "】");
 		Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
 		serviceInstanceMap.remove(serviceInstanceId);
 	}
