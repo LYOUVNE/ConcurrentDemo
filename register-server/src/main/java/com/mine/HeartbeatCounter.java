@@ -1,22 +1,24 @@
 package com.mine;
 
-public class HeartbeatMeasuredRate {
+import java.util.concurrent.atomic.AtomicLong;
+
+public class HeartbeatCounter {
     /**
      * 单例实例
      */
-    private static HeartbeatMeasuredRate instance = new HeartbeatMeasuredRate();
+    private static HeartbeatCounter instance = new HeartbeatCounter();
 
     /**
      * 最近一分钟的心跳次数
      */
-    private long lastMinuteHeartbeat = 0L;
+    private AtomicLong lastMinuteHeartbeat = new AtomicLong(0L);
 
     /**
      * 最近一分钟的时间戳
      */
     private long lastMinuteTimeStamp = System.currentTimeMillis();
 
-    public HeartbeatMeasuredRate(){
+    public HeartbeatCounter(){
         Daemon daemon = new Daemon();
         daemon.setDaemon(true);
         daemon.start();
@@ -26,22 +28,22 @@ public class HeartbeatMeasuredRate {
      * 获取单例实例
      * @return
      */
-    public static HeartbeatMeasuredRate getInstance(){
+    public static HeartbeatCounter getInstance(){
         return instance;
     }
 
     /**
      * 增加一次最近一分钟的心跳次数
      */
-    public synchronized void increment(){
-        lastMinuteHeartbeat++;
+    public /**synchronized*/ void increment(){
+        lastMinuteHeartbeat.incrementAndGet();
     }
 
     /**
      * 获取最近一分钟的心跳次数
      */
-    public synchronized long get(){
-        return lastMinuteHeartbeat;
+    public /**synchronized*/ long get(){
+        return lastMinuteHeartbeat.get();
     }
 
     /**
@@ -52,10 +54,10 @@ public class HeartbeatMeasuredRate {
         public void run() {
             while (true) {
                 try {
-                    synchronized (HeartbeatMeasuredRate.class) {
+                    synchronized (HeartbeatCounter.class) {
                         if (System.currentTimeMillis() - lastMinuteTimeStamp > 60 * 1000) {
                             lastMinuteTimeStamp = System.currentTimeMillis();
-                            lastMinuteHeartbeat = 0L;
+                            lastMinuteHeartbeat = new AtomicLong(0L);
                         }
                     }
                     Thread.sleep(1000);
