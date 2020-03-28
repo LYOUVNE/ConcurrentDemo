@@ -1,6 +1,7 @@
 package com.mine;
 
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.LongAdder;
 
 public class HeartbeatCounter {
     /**
@@ -11,7 +12,7 @@ public class HeartbeatCounter {
     /**
      * 最近一分钟的心跳次数
      */
-    private AtomicLong lastMinuteHeartbeat = new AtomicLong(0L);
+    private LongAdder lastMinuteHeartbeat = new LongAdder();
 
     /**
      * 最近一分钟的时间戳
@@ -36,14 +37,14 @@ public class HeartbeatCounter {
      * 增加一次最近一分钟的心跳次数
      */
     public /**synchronized*/ void increment(){
-        lastMinuteHeartbeat.incrementAndGet();
+        lastMinuteHeartbeat.increment();
     }
 
     /**
      * 获取最近一分钟的心跳次数
      */
     public /**synchronized*/ long get(){
-        return lastMinuteHeartbeat.get();
+        return lastMinuteHeartbeat.longValue();
     }
 
     /**
@@ -57,7 +58,7 @@ public class HeartbeatCounter {
                     synchronized (HeartbeatCounter.class) {
                         if (System.currentTimeMillis() - lastMinuteTimeStamp > 60 * 1000) {
                             lastMinuteTimeStamp = System.currentTimeMillis();
-                            lastMinuteHeartbeat = new AtomicLong(0L);
+                            lastMinuteHeartbeat = new LongAdder();
                         }
                     }
                     Thread.sleep(1000);
