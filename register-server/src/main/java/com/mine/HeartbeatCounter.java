@@ -12,7 +12,8 @@ public class HeartbeatCounter {
     /**
      * 最近一分钟的心跳次数
      */
-    private LongAdder lastMinuteHeartbeat = new LongAdder();
+//    private LongAdder lastMinuteHeartbeat = new LongAdder();
+    private AtomicLong lastMinuteHeartbeat = new AtomicLong(0L);
 
     /**
      * 最近一分钟的时间戳
@@ -37,8 +38,10 @@ public class HeartbeatCounter {
      * 增加一次最近一分钟的心跳次数
      */
     public /**synchronized*/ void increment(){
-        lastMinuteHeartbeat.increment();
+//        lastMinuteHeartbeat.increment();
+        lastMinuteHeartbeat.incrementAndGet();
     }
+
 
     /**
      * 获取最近一分钟的心跳次数
@@ -58,7 +61,8 @@ public class HeartbeatCounter {
                     synchronized (HeartbeatCounter.class) {
                         if (System.currentTimeMillis() - lastMinuteTimeStamp > 60 * 1000) {
                             lastMinuteTimeStamp = System.currentTimeMillis();
-                            lastMinuteHeartbeat = new LongAdder();
+//                            lastMinuteHeartbeat = new LongAdder();
+                            lastMinuteHeartbeat = new AtomicLong(0L);
                         }
                     }
                     Thread.sleep(1000);

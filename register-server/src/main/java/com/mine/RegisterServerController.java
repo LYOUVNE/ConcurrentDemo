@@ -78,11 +78,19 @@ public class RegisterServerController {
 	}
 
 	/**
-	 * 拉取服务注册表
+	 * 拉取全量服务注册表
 	 * @return
 	 */
-	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry() {
-		return registry.getRegistry();
+	public Applications fetchFullRegistry() {
+		return new Applications(registry.getRegistry());
+	}
+
+	/**
+	 * 拉取全增量服务注册表
+	 * @return
+	 */
+	public DeltaRegistry fetchDeltaRegistry() {
+		return registry.getDeltaRegistry();
 	}
 
 	/**
