@@ -1,2 +1,3 @@
-/register-client/target/
-/register-server/target/
+*.iml
+/.idea
+target/*
