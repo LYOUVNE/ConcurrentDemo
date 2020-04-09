@@ -1,6 +1,9 @@
 package com.mine;
 
+import com.mine.CachedServiceRegistry.RecentlyChangedServiceInstance;
+
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -41,7 +44,11 @@ public class HttpSender {
 		return response;
 	}
 
-	public Map<String, Map<String, ServiceInstance>> fetchServiceRegistry(){
+	/**
+	 * 全量拉取服务注册表
+	 * @return
+	 */
+	public Applications fetchFullRegistry(){
 		Map<String, Map<String, ServiceInstance>> registry = new HashMap<String, Map<String, ServiceInstance>>();
 
 		ServiceInstance serviceInstance = new ServiceInstance();
@@ -58,7 +65,36 @@ public class HttpSender {
 
 		System.out.println("拉取注册表：" + registry);
 
-		return registry;
+		return new Applications(registry);
+	}
+
+	/**
+	 * 增量拉取服务注册表
+	 * @return
+	 */
+	public DeltaRegistry fetchDeltaRegister() {
+		LinkedList<RecentlyChangedServiceInstance> recentlyChangedQueue = new LinkedList<>();
+
+		ServiceInstance serviceInstance = new ServiceInstance();
+		serviceInstance.setHostname("order-service-01");
+		serviceInstance.setIp("192.168.31.288");
+		serviceInstance.setPort(9000);
+		serviceInstance.setServiceInstanceId("ORDER-SERVICE-192.168.31.288:9000");
+		serviceInstance.setServiceName("ORDER-SERVICE");
+
+		RecentlyChangedServiceInstance recentlyChangedItem = new RecentlyChangedServiceInstance(
+				serviceInstance,
+				System.currentTimeMillis(),
+				"register"
+		);
+
+		recentlyChangedQueue.add(recentlyChangedItem);
+
+		System.out.println("拉取增量注册表：" + recentlyChangedQueue);
+
+		DeltaRegistry deltaRegistry = new DeltaRegistry(recentlyChangedQueue, 2L);
+
+		return deltaRegistry;
 	}
 
 	/**

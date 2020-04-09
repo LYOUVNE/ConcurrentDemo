@@ -32,14 +32,14 @@ public class RegisterClient {
 	 */
 	private volatile Boolean isRunning;
 
-	private ClientCachedServiceRegistry registry;
+	private CachedServiceRegistry registry;
 	
 	public RegisterClient() {
 		this.serviceInstanceId = UUID.randomUUID().toString().replace("-", "");
 		this.httpSender = new HttpSender();
 		this.heartbeatWorker = new HeartbeatWorker();
 		this.isRunning = true;
-		this.registry = new ClientCachedServiceRegistry(this,httpSender);
+		this.registry = new CachedServiceRegistry(this,httpSender);
 	}
 	
 	public void start() {
@@ -71,7 +71,7 @@ public class RegisterClient {
 	public void shutDown() {
 		this.isRunning = false;
 		this.heartbeatWorker.interrupt();
-		this.registry.destory();
+		this.registry.destroy();
 		this.httpSender.cancel(SERVICE_NAME, serviceInstanceId);
 	}
 	
