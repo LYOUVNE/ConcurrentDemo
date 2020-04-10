@@ -78,22 +78,6 @@ public class RegisterServerController {
 	}
 
 	/**
-	 * 拉取全量服务注册表
-	 * @return
-	 */
-	public Applications fetchFullRegistry() {
-		return new Applications(registry.getRegistry());
-	}
-
-	/**
-	 * 拉取全增量服务注册表
-	 * @return
-	 */
-	public DeltaRegistry fetchDeltaRegistry() {
-		return registry.getDeltaRegistry();
-	}
-
-	/**
 	 * 服务下线
 	 */
 	public void cancel(String serviceName,String serviceInstanceId) {
@@ -106,6 +90,32 @@ public class RegisterServerController {
 					selfProtectionPolicy.getExpectedHeartbeatRate() - 2);
 			selfProtectionPolicy.setExpectedHeartbeatThreshold(
 					(long)(selfProtectionPolicy.getExpectedHeartbeatRate() * 0.85));
+		}
+	}
+
+	/**
+	 * 拉取全量服务注册表
+	 * @return
+	 */
+	public Applications fetchFullRegistry() {
+		try {
+			registry.readLock();
+			return new Applications(registry.getRegistry());
+		} finally {
+			registry.readUnLock();
+		}
+	}
+
+	/**
+	 * 拉取全增量服务注册表
+	 * @return
+	 */
+	public DeltaRegistry fetchDeltaRegistry() {
+		try {
+			registry.readLock();
+			return registry.getDeltaRegistry();
+		} finally {
+			registry.readUnLock();
 		}
 	}
 }

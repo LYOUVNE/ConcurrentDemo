@@ -42,7 +42,9 @@ public class ServiceInstance {
 	private Lease lease;
 	
 	public ServiceInstance() {
-		this.lease = new Lease();
+		if (this.lease != null) {
+			this.lease = new Lease();
+		}
 	}
 	
 	/**
