@@ -2,6 +2,8 @@ package com.mine;
 
 import lombok.Data;
 
+import java.rmi.dgc.Lease;
+
 /**
  * 代表了一个服务实例
  * 里面包含了一个服务实例的所有信息
@@ -42,16 +44,16 @@ public class ServiceInstance {
 	private Lease lease;
 	
 	public ServiceInstance() {
-		if (this.lease != null) {
-			this.lease = new Lease();
-		}
+		this.lease = new Lease();
 	}
 	
 	/**
 	 * 服务续约
 	 */
 	public void renew() {
-		this.lease.renew();
+		if (this.lease != null) {
+			this.lease.renew();
+		}
 	}
 	
 	/**

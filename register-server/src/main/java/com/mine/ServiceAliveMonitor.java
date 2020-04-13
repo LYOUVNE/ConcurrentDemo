@@ -63,6 +63,7 @@ public class ServiceAliveMonitor {
 					try {
 						// 对整个服务注册表，加读锁
 						registry.readLock();
+
 						registryMap = registry.getRegistry();
 						for(String serviceName : registryMap.keySet()) {
 							Map<String, ServiceInstance> serviceInstanceMap =
@@ -81,6 +82,7 @@ public class ServiceAliveMonitor {
 						registry.readUnLock();
 					}
 
+					// 将所有的要删除的服务实例，从服务注册表删除
 					for(ServiceInstance serviceInstance : removingServiceInstance) {
 						registry.remove(serviceInstance.getServiceName(), serviceInstance.getServiceInstanceId());
 
@@ -90,6 +92,12 @@ public class ServiceAliveMonitor {
 							selfProtectionPolicy.setExpectedHeartbeatThreshold((long) (selfProtectionPolicy.getExpectedHeartbeatThreshold() * 0.85));
 						}
 					}
+
+					if (removingServiceInstance.size() == 0) {
+						// 过期注册表缓存
+						ServiceRegistryCache.getInstance().invalidate();
+					}
+
 					Thread.sleep(CHECK_ALIVE_INTERVAL);
 				} catch (Exception e) {
 					e.printStackTrace();

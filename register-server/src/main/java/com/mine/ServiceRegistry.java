@@ -139,15 +139,9 @@ public class ServiceRegistry {
 	 * @param serviceInstanceId 服务实例id
 	 * @return 服务实例
 	 */
-	public ServiceInstance getServiceInstance(String serviceName,
-			String serviceInstanceId) {
-		try {
-			this.readLock();
-			Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
-			return serviceInstanceMap.get(serviceInstanceId);
-		} finally {
-			this.readUnLock();
-		}
+	public ServiceInstance getServiceInstance(String serviceName, String serviceInstanceId) {
+		Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
+		return serviceInstanceMap.get(serviceInstanceId);
 	}
 	
 	/**
