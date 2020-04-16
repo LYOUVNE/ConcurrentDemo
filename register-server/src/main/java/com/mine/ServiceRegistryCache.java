@@ -77,6 +77,8 @@ public class ServiceRegistryCache {
         try {
             readLock.lock();
 
+//            System.out.println("读缓存获取到了读锁，尝试获取synchronized锁");
+
             cacheValue = readOnlyMap.get(cacheKey);
             if (cacheValue == null) {
                 synchronized (lock) {
@@ -112,7 +114,7 @@ public class ServiceRegistryCache {
                 return registry.getDeltaRegistry();
             }
         } finally {
-            readLock.unlock();
+            registry.readUnLock();
         }
         return null;
     }
@@ -145,24 +147,19 @@ public class ServiceRegistryCache {
         public void run() {
             while (true) {
                 try {
-                    synchronized (lock) {
-                        if (readWriteMap.get(CacheKey.FULL_SERVICE_REGISTRY) == null) {
-                            try {
-                                writeLock.lock();
-                                readOnlyMap.put(CacheKey.FULL_SERVICE_REGISTRY, null);
-                            } finally {
-                                writeLock.unlock();
-                            }
-                        }
+                    try {
+                        writeLock.lock();
 
-                        if (readWriteMap.get(CacheKey.DELTA_SERVICE_REGISTRY) == null) {
-                            try {
-                                writeLock.lock();
+                        synchronized (lock) {
+                            if (readWriteMap.get(CacheKey.FULL_SERVICE_REGISTRY) == null) {
+                                readOnlyMap.put(CacheKey.FULL_SERVICE_REGISTRY, null);
+                            }
+                            if (readWriteMap.get(CacheKey.DELTA_SERVICE_REGISTRY) == null) {
                                 readOnlyMap.put(CacheKey.DELTA_SERVICE_REGISTRY, null);
-                            } finally {
-                                writeLock.unlock();
                             }
                         }
+                    } finally {
+                        writeLock.unlock();
                     }
                     Thread.sleep(CACHE_MAP_SYNC_INTERVAL);
                 } catch (Exception e){
