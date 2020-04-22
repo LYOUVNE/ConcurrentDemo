@@ -1,4 +1,4 @@
-package com.mine;
+package com.mine.namenode;
 
 /**
  * NameNode核心启动类

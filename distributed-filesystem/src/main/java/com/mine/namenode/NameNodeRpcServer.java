@@ -1,4 +1,4 @@
-package com.mine;
+package com.mine.namenode;
 
 /**
  * NameNode的rpc服务的接口

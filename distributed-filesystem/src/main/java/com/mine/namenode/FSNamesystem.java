@@ -1,4 +1,4 @@
-package com.mine;
+package com.mine.namenode;
 
 /**
  * 负责管理元数据的核心组件

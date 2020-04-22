@@ -1,4 +1,4 @@
-package com.mine;
+package com.mine.namenode;
 
 import java.util.LinkedList;
 
