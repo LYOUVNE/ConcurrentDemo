@@ -12,6 +12,7 @@
         <module>register-client</module>
         <module>register-server</module>
         <module>distributed-filesystem</module>
+        <module>concurrent-demo</module>
     </modules>
 
     <dependencies>
