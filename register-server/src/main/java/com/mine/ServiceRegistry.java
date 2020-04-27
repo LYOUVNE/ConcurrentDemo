@@ -1,8 +1,8 @@
 package com.mine;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
@@ -30,8 +30,8 @@ public class ServiceRegistry {
 	 * Map<String, ServiceInstance>：key是服务实例id，value是服务实例的信息
 	 * 
 	 */
-	private Map<String, Map<String, ServiceInstance>> registry = 
-			new HashMap<String, Map<String, ServiceInstance>>();
+	private Map<String, ConcurrentHashMap<String, ServiceInstance>> registry =
+			new ConcurrentHashMap<>();
 
 	/**
 	 * 服务注册表的锁
@@ -86,11 +86,11 @@ public class ServiceRegistry {
 			recentlyChangedQueue.offer(recentlyChangedItem);
 
 			// 将服务实例放入注册表中
-			Map<String, ServiceInstance> serviceInstanceMap =
+			ConcurrentHashMap<String, ServiceInstance> serviceInstanceMap =
 					registry.get(serviceInstance.getServiceName());
 
 			if(serviceInstanceMap == null) {
-				serviceInstanceMap = new HashMap<String, ServiceInstance>();
+				serviceInstanceMap = new ConcurrentHashMap<String, ServiceInstance>();
 				registry.put(serviceInstance.getServiceName(), serviceInstanceMap);
 			}
 
@@ -148,7 +148,7 @@ public class ServiceRegistry {
 	 * 获取整个注册表
 	 * @return
 	 */
-	public Map<String, Map<String, ServiceInstance>> getRegistry() {
+	public Map<String, ConcurrentHashMap<String, ServiceInstance>> getRegistry() {
 		return registry;
 	}
 
