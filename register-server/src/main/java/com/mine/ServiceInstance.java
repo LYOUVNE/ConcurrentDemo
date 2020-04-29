@@ -2,8 +2,6 @@ package com.mine;
 
 import lombok.Data;
 
-import java.rmi.dgc.Lease;
-
 /**
  * 代表了一个服务实例
  * 里面包含了一个服务实例的所有信息

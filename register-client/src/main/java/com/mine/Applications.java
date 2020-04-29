@@ -4,15 +4,16 @@ import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Data
 public class Applications {
-    private Map<String, Map<String,ServiceInstance>> registry = new HashMap<>();
+    private Map<String, ConcurrentHashMap<String,ServiceInstance>> registry = new ConcurrentHashMap<>();
 
     public Applications() {
     }
 
-    public Applications(Map<String, Map<String, ServiceInstance>> registry) {
+    public Applications(Map<String, ConcurrentHashMap<String, ServiceInstance>> registry) {
         this.registry = registry;
     }
 }

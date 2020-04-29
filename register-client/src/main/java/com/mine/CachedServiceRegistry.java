@@ -3,6 +3,8 @@ package com.mine;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicStampedReference;
 
@@ -136,18 +138,18 @@ public class CachedServiceRegistry {
          * 合并增量注册表到本地缓存注册表里去
          * @param deltaRegistry
          */
-        private void mergeDeltaRegistry(LinkedList<RecentlyChangedServiceInstance> deltaRegistry) {
-            Map<String, Map<String, ServiceInstance>> registry = applications.getReference().getRegistry();
+        private void mergeDeltaRegistry(Queue<RecentlyChangedServiceInstance> deltaRegistry) {
+            Map<String, ConcurrentHashMap<String, ServiceInstance>> registry = applications.getReference().getRegistry();
             synchronized (applications) {
                 for (RecentlyChangedServiceInstance recentlyChangedItem : deltaRegistry) {
                     String serviceName = recentlyChangedItem.serviceInstance.getServiceName();
                     String serviceInstanceId = recentlyChangedItem.serviceInstance.getServiceInstanceId();
-                    Map<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
+                    ConcurrentHashMap<String, ServiceInstance> serviceInstanceMap = registry.get(serviceName);
                     // 如果是注册操作的话
                     if (ServiceInstanceOperation.REGISTER.equals(recentlyChangedItem.serviceInstanceOperation)) {
 
                         if (serviceInstanceMap == null) {
-                            serviceInstanceMap = new HashMap<>();
+                            serviceInstanceMap = new ConcurrentHashMap<>();
                             registry.put(serviceName,serviceInstanceMap);
                         }
 
@@ -170,7 +172,7 @@ public class CachedServiceRegistry {
     }
 
     private void reconcileRegistry(DeltaRegistry deltaRegistry) {
-        Map<String, Map<String, ServiceInstance>> registry = applications.getReference().getRegistry();
+        Map<String, ConcurrentHashMap<String, ServiceInstance>> registry = applications.getReference().getRegistry();
         Long serverSideTotalCount = deltaRegistry.getServiceInstanceTotalCount();
 
         Long clientSideTotalCount = 0L;
@@ -202,7 +204,7 @@ public class CachedServiceRegistry {
      * 获取服务注册表
      * @return
      */
-    public Map<String,Map<String,ServiceInstance>> getRegistry(){
+    public Map<String,ConcurrentHashMap<String,ServiceInstance>> getRegistry(){
         return applications.getReference().getRegistry();
     }
 

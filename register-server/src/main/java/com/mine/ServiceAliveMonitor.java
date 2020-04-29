@@ -3,6 +3,7 @@ package com.mine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 微服务存活状态监控组件
@@ -45,7 +46,7 @@ public class ServiceAliveMonitor {
 		
 		@Override
 		public void run() {
-			Map<String, Map<String, ServiceInstance>> registryMap = null;
+			Map<String, ConcurrentHashMap<String, ServiceInstance>> registryMap = null;
 			
 			while(true) {
 				try {
