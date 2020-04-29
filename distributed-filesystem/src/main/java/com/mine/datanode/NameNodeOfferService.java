@@ -1,11 +1,13 @@
 package com.mine.datanode;
 
+import java.util.Iterator;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CountDownLatch;
 
 /**
  * 负责跟一组NameNode进行通信的OfferServie组件
  */
-public class NameNodeGroupOfferService {
+public class NameNodeOfferService {
     /**
      * 负责跟NameNode主节点通信的ServiceActor组件
      */
@@ -15,13 +17,21 @@ public class NameNodeGroupOfferService {
      * 负责跟NameNode备节点通信的ServiceActor组件
      */
     private NameNodeServiceActor standbyServiceActor;
+    /**
+     * 这个datanode上保存的ServiceActor列表
+     */
+    private CopyOnWriteArrayList<NameNodeServiceActor> serviceActors;
 
     /**
      * 构造函数
      */
-    public NameNodeGroupOfferService() {
+    public NameNodeOfferService() {
         this.activeServiceActor = new NameNodeServiceActor();
         this.standbyServiceActor = new NameNodeServiceActor();
+
+        this.serviceActors = new CopyOnWriteArrayList<>();
+        this.serviceActors.add(activeServiceActor);
+        this.serviceActors.add(standbyServiceActor);
     }
 
     /**
@@ -44,6 +54,23 @@ public class NameNodeGroupOfferService {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
 
+    /**
+     * 关闭指定的一个ServiceActor
+     * @param serviceActor
+     */
+    public void shutdown(NameNodeServiceActor serviceActor) {
+        serviceActors.remove(serviceActor);
+    }
+
+    /**
+     * 迭代遍历ServiceActor
+     */
+    public void iteratorActors() {
+        Iterator<NameNodeServiceActor> iterator = serviceActors.iterator();
+        while (iterator.hasNext()) {
+            iterator.next();
+        }
     }
 }
