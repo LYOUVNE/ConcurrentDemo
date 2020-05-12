@@ -1,5 +1,6 @@
 package com.mine.server.web;
 
+import com.mine.server.cluster.PeersReplicateBatch;
 import com.mine.server.cluster.PeersReplicator;
 import com.mine.server.core.*;
 
@@ -120,6 +121,22 @@ public class RegisterServerController {
 
 		// 进行集群同步
 		peersReplicator.replicateCancel(cancelRequest);
+	}
+
+	/**
+	 * 同步batch数据
+	 * @param batch
+	 */
+	public void replicateBatch(PeersReplicateBatch batch) {
+		for(AbstractRequest request : batch.getRequests()) {
+			if(request.getType().equals(AbstractRequest.REGISTER_REQUEST)) {
+				register((RegisterRequest) request);
+			} else if(request.getType().equals(AbstractRequest.CANCEL_REQUEST)) {
+				cancel((CancelRequest) request);
+			} else if(request.getType().equals(AbstractRequest.HEARTBEAT_REQUEST)) {
+				heartbeat((HeartbeatRequest) request);
+			}
+		}
 	}
 
 	/**
